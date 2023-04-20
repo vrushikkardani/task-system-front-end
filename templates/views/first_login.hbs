@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	{{>head}}
+</head>
+
+<body class="account-page">
+
+	<!-- Main Wrapper -->
+	<div class="main-wrapper">
+		<div class="account-content">
+			<div class="container">
+
+				<!-- Account Logo -->
+				{{!-- <div class="account-logo">
+					<img src="img/aagite.png" alt="Dreamguy's Technologies">
+				</div> --}}
+				<!-- /Account Logo -->
+
+				<div class="account-box">
+					<div class="account-wrapper">
+						<h3 class="account-title">Login</h3>
+						<p class="account-subtitle">Access to our dashboard</p>
+
+						<!-- Account Form -->
+						<form>
+							<div class="form-group">
+								<label>Email Address</label>
+								<input class="form-control" type="text" id="email">
+							</div>
+							<div class="form-group">
+								<div class="row">
+									<div class="col">
+										<label>Password</label>
+									</div>
+
+								</div>
+								<input class="form-control" type="password" id="password">
+							</div>
+							<p id="error" class="text-center text-danger"></p>
+							<div class="form-group text-center">
+								{{!-- action="index.html" --}}
+								<button class="btn btn-primary account-btn" onclick="Login()">Login</button>
+							</div>
+
+						</form>
+						<!-- /Account Form -->
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Main Wrapper -->
+
+	{{>js}}
+
+</body>
+<script>
+	async function reDirect() {
+		var Tokens = await localStorage.getItem("Token")
+		var Role = localStorage.getItem("Role")
+
+		console.log("LOgin Page", Tokens)
+
+
+		if (Tokens && Role === "Admin") {
+			window.location.href = "admin_dashbord"
+		} else if (Tokens && Role === "Employee") {
+			window.location.href = "employee"
+		}
+	}
+	//reDirect()
+	function Login() {
+		event.preventDefault();
+		if (document.getElementById("email").value.trim() == "" && document.getElementById("password").value.trim() == "") {
+			document.getElementById("error").innerHTML = "Enter Email Id And PassWord"
+		} else if (document.getElementById("email").value.trim() == "") {
+			document.getElementById("error").innerHTML = "Enter Email Id "
+		} else if (document.getElementById("password").value.trim() == "") {
+			document.getElementById("error").innerHTML = "Enter PassWord"
+		} else {
+			var email = document.getElementById("email").value
+			var password = document.getElementById("password").value
+			var data = {
+				email: email,
+				password: password
+			}
+			var myHeaders = {
+				"Content-Type": "application/json",
+			};
+			var raw = JSON.stringify(data);
+			var requestOptions = {
+				method: 'POST',
+				headers: myHeaders,
+				body: raw
+			};
+			fetch("http://127.0.0.1:3647/api/userlogin/login", requestOptions)
+				.then(response => response.json())
+				.then(result => {
+					if (!result.error) {
+						localStorage.setItem("Token", result?.data?.token)
+						localStorage.setItem("Role", result?.data?.role)
+						localStorage.setItem("Email", result?.data?.email)
+
+						console.log(result.data.token)
+						console.log(result.data.role)
+						console.log(result.data.email)
+
+						if (result.data.token && result.data.role === "Admin") {
+
+							window.location.href = "admin_dashbord"
+						} else if (result.data.token && result.data.role === "Employee") {
+							window.location.href = "employee"
+						}
+
+					} else {
+						document.getElementById("error").innerHTML = result.message
+					}
+				})
+				.catch(error => console.log('error', error));
+		}
+	}
+</script>
+
+</html>

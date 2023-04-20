@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{>head}}
+
+</head>
+
+<body>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+
+        <!-- Header -->
+        {{>header}}
+        <!-- /Header -->
+
+        <!-- Sidebar -->
+        {{>admin_sidebar}}
+        <!-- /Sidebar -->
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div id="navbar-animmenu">
+                        <ul class="show-dropdown main-navbar">
+                            <div class="hori-selector">
+                                <div class="left"></div>
+                                <div class="right"></div>
+                            </div>
+
+                            <li>
+                                <a href="admin_add_user"><i class="fas fa-tachometer-alt"></i>User</a>
+                            </li>
+                            <li class="active">
+                                <a href="admin_add_project"><i class="far fa-chart-bar"></i>Project</a>
+                            </li>
+                            <li>
+                                <a href="admin_add_client"><i class="far fa-chart-bar"></i>Client</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="content container-fluid">
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="page-title">Settings</h3>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item">Home</li>
+                                <li class="breadcrumb-item active">Settings</li>
+                                <li class="breadcrumb-item active">Project</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+                {{>add_project}}
+                {{>admin_edit_project_pop_pop}}
+            </div>
+
+        </div>
+    </div>
+
+
+    </div>
+    <!-- /Page Wrapper -->
+
+    </div>
+    <!-- /Main Wrapper -->
+    {{>js}}
+
+</body>
+
+<script>
+
+    $(document).ready(function () {
+
+        if ($('.summernote').length > 0) {
+            $('.summernote').summernote({
+                height: 200,                 // set editor height
+                minHeight: null,             // set minimum height of editor
+                maxHeight: null,             // set maximum height of editor
+                focus: false                 // set focus to editable area after initializing summernote
+            });
+        }
+
+    });
+
+
+    $(document).ready(function () {
+        $('#liadmin_add_user').addClass('active');
+    });
+    getclientname()
+    data()
+    editgetclientname()
+    function getclientname() {
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch("http://127.0.0.1:3647/api/client", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                var select = document.getElementById('clientname');
+                select.innerHTML = "";
+                for (i = 0; i <= result.data.length; i++) {
+                    var cname = result.data[i].Client_Name
+                    //console.log(cname)
+                    var template = `
+                            <option value="${cname}">${cname}</option>
+                    `
+                    select.innerHTML += template;
+                }
+
+            })
+            .catch(error => console.log('error', error));
+    }
+    function editgetclientname() {
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch("http://127.0.0.1:3647/api/client", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                var select1 = document.getElementById('editclientname');
+                select1.innerHTML = "";
+                for (i = 0; i <= result.data.length; i++) {
+                    var cname = result.data[i].Client_Name
+                    //console.log(cname)
+                    var template = `
+                            <option value="${cname}">${cname}</option>
+                    `
+                    select1.innerHTML += template;
+                }
+
+            })
+            .catch(error => console.log('error', error));
+    }
+
+    function addproject() {
+        event.preventDefault();
+        document.getElementById("error").innerHTML = "";
+        var Project_Name = document.getElementById("projectname").value
+        var Client_Name = document.getElementById("clientname").value
+        var Start_Date = document.getElementById("startdate").value
+        var End_Date = document.getElementById("enddate").value
+        var Budget = document.getElementById("budget").value
+        var Project_Type = document.getElementById("projecttype").value
+        var Description = document.getElementById("description").value
+        var Documents = document.getElementById("document").files
+
+        if (document.getElementById("projectname").value.trim() == "" && document.getElementById("clientname").value.trim() == "" && document.getElementById("startdate").value.trim() == "" && document.getElementById("enddate").value.trim() == "" && document.getElementById("budget").value.trim() == "" && document.getElementById("projecttype").value.trim() == "" && document.getElementById("description").value.trim() == "" && document.getElementById("document").files.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Project Name , Start Date , End Date , Budget , Description , document and Select Client Name and Select Project Type";
+        } else if (document.getElementById("projectname").value.trim() == "" && document.getElementById("clientname").value.trim() == "" && document.getElementById("startdate").value.trim() == "" && document.getElementById("enddate").value.trim() == "" && document.getElementById("budget").value.trim() == "" && document.getElementById("projecttype").value.trim() == "" && document.getElementById("description").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Project Name , Start Date , End Date , Budget , Description and Select Client Name and Select Project Type";
+        } else if (document.getElementById("projectname").value.trim() == "" && document.getElementById("clientname").value.trim() == "" && document.getElementById("startdate").value.trim() == "" && document.getElementById("enddate").value.trim() == "" && document.getElementById("budget").value.trim() == "" && document.getElementById("projecttype").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Project Name , Start Date , End Date , Budget and Select Client Name and Select Project Type";
+        } else if (document.getElementById("projectname").value.trim() == "" && document.getElementById("clientname").value.trim() == "" && document.getElementById("startdate").value.trim() == "" && document.getElementById("enddate").value.trim() == "" && document.getElementById("budget").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Project Name , Start Date , End Date , Budget and Select Client Name ";
+        } else if (document.getElementById("projectname").value.trim() == "" && document.getElementById("clientname").value.trim() == "" && document.getElementById("startdate").value.trim() == "" && document.getElementById("enddate").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Project Name , Start Date , End Date and Select Client Name ";
+        } else if (document.getElementById("projectname").value.trim() == "" && document.getElementById("clientname").value.trim() == "" && document.getElementById("startdate").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Project Name , Start Date and Select Client Name ";
+        } else if (document.getElementById("projectname").value.trim() == "" && document.getElementById("clientname").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Project Name and Select Client Name ";
+        } else if (document.getElementById("projectname").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Project Name ";
+        } else if (document.getElementById("clientname").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Seelect Name ";
+        } else if (document.getElementById("startdate").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Start Date ";
+        } else if (document.getElementById("enddate").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter End Date ";
+        } else if (document.getElementById("budget").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Budget ";
+        } else if (document.getElementById("projecttype").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Select Project type ";
+        } else if (document.getElementById("description").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Description ";
+        } else if (document.getElementById("document").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Document ";
+        } else {
+
+            console.log(Project_Name)
+            console.log(Client_Name)
+            console.log(Start_Date)
+            console.log(End_Date)
+            console.log(Budget)
+            console.log(Project_Type)
+            console.log(Description)
+            console.log(Documents[0])
+
+
+            const getToken = localStorage.getItem("Token")
+            const token = "Bearer" + " " + getToken
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", token);
+            var formdata = new FormData();
+
+
+            formdata.append("Project_Name", Project_Name);
+            formdata.append("Client", Client_Name);
+            formdata.append("Start_Date", Start_Date);
+            formdata.append("End_Date", End_Date);
+            formdata.append("Budget", Budget);
+            formdata.append("Project_Type", Project_Type);
+            formdata.append("Description", Description);
+            formdata.append("Documents", Documents[0]);
+
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: formdata,
+                redirect: 'follow'
+            };
+
+            fetch("http://127.0.0.1:3647/api/project/create", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (!result.error) {
+                        Swal.fire({
+                            // position: 'top-end',
+                            icon: 'success',
+                            title: 'Submit Successful',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () {
+                            window.location.href = "admin_add_project";
+                        }, 3000);
+                    }
+                })
+                .catch(error => console.log('error', error));
+
+
+        }
+
+    }
+
+
+    function data() {
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch("http://127.0.0.1:3647/api/project", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                var table = document.getElementById('tbd');
+                table.innerHTML = "";
+
+                for (i = 0; i <= result.data.length; i++) {
+                    var Project_Name = result.data[i].Project_Name
+                    var Client_Name = result.data[i].Client
+                    var Start_Date = result.data[i].Start_Date
+                    var End_Date = result.data[i].End_Date
+                    var Budget = result.data[i].Budget
+                    var Project_Type = result.data[i].Project_Type
+                    var Documents = result.data[i].Documents
+                    var Description = result.data[i].Description
+                    var id = result.data[i]._id
+                    var template = `
+                    <tr>
+                        <td >${Project_Name}</td>
+                        <td >${Client_Name}</td>
+                        <td >${Start_Date}</td>
+                        <td >${End_Date}</td>
+                        <td >${Budget}</td>
+                        <td >${Project_Type}</td>
+                        <td >${Description}</td>
+                        <td class="text-right">
+								<div class="dropdown dropdown-action">
+									<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+										aria-expanded="false"><i class="material-icons">more_vert</i></a>
+									<div class="dropdown-menu dropdown-menu-right">
+										<a onclick="{edit('${Project_Name}','${Client_Name}','${Start_Date}','${End_Date}','${Budget}','${Project_Type}','${Description}','${Documents}','${id}')}" class="dropdown-item" href="#" data-toggle="modal" data-target="#admin_edit_project"><i onclick="edit(this)" class="fa fa-pencil m-r-5"></i> Edit</a>
+										<a onclick="{Delete('${id}')}"  class="dropdown-item" href="#" data-toggle="modal"
+											data-target="#delete_department"><i onclick="Delete(this)" class="fa fa-trash-o m-r-5"></i>
+											Delete</a>
+									</div>
+								</div>
+							</td>
+                    </tr>`;
+                    table.innerHTML += template;
+                }
+
+
+            })
+            .catch(error => console.log('error', error));
+    }
+    function Delete(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                )
+                var requestOptions = {
+                    method: 'DELETE',
+                    redirect: 'follow'
+                };
+
+                fetch(`http://127.0.0.1:3647/api/project/${id}`, requestOptions)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (!result.error) {
+                            data()
+                        } else {
+                            document.getElementById("error").innerHTML = result.message
+                        }
+                    })
+                    .catch(error => console.log('error', error));
+            }
+        })
+    }
+
+
+    function edit(Project_Name, Client_Name, Start_Date, End_Date, Budget, Project_Type, Description,Documents, id) {
+        document.getElementById("editprojectname").value = Project_Name;
+        document.getElementById("editclientname").value = Client_Name;
+        document.getElementById("editstartdate").value = Start_Date;
+        document.getElementById("editenddate").value = End_Date;
+        document.getElementById("editbudget").value = Budget;
+        document.getElementById("editprojecttype").value = Project_Type;
+        document.getElementById("editprojecttid").value = id;
+ 
+      
+        document.getElementById("editdescription").innerHTML = Description;
+     $('#editdescription').summernote('code', Description);
+
+   // $(document).ready(function () {
+     //  $('#summernote').summernote('code', Description);
+       
+   // });
+   
+        
+        console.log(Description)
+        var APIURl='http://127.0.0.1:3647';
+        document.getElementById("output").src = APIURl+ Documents;
+
+        var select2 = document.getElementById("editclientname")
+        select2.value = Client_Name;
+        triggerChange(select2)
+        var select3 = document.getElementById("editprojecttype")
+        select3.value = Project_Type;
+        triggerChange(select3)
+    }
+
+    function triggerChange(element) {
+        let changeEvent = new Event("change");
+        element.dispatchEvent(changeEvent);
+    }
+
+    function updateproject() {
+        event.preventDefault();
+        document.getElementById("error1").innerHTML = "";
+        var Project_Name = document.getElementById("editprojectname").value
+        var Client_Name = document.getElementById("editclientname").value
+        var Start_Date = document.getElementById("editstartdate").value
+        var End_Date = document.getElementById("editenddate").value
+        var Budget = document.getElementById("editbudget").value
+        var Project_Type = document.getElementById("editprojecttype").value
+        var Description = document.getElementById("editdescription").value
+        var Documents = document.getElementById("editdocument").files
+        var id = document.getElementById("editprojecttid").value
+
+        if (document.getElementById("editprojectname").value.trim() == "" && document.getElementById("editclientname").value.trim() == "" && document.getElementById("editstartdate").value.trim() == "" && document.getElementById("editenddate").value.trim() == "" && document.getElementById("editbudget").value.trim() == "" && document.getElementById("editprojecttype").value.trim() == "" && document.getElementById("editdescription").value.trim() == "" && document.getElementById("document").files.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Project Name , Start Date , End Date , Budget , Description , document and Select Client Name and Select Project Type";
+        } else if (document.getElementById("editprojectname").value.trim() == "" && document.getElementById("editclientname").value.trim() == "" && document.getElementById("editstartdate").value.trim() == "" && document.getElementById("editenddate").value.trim() == "" && document.getElementById("editbudget").value.trim() == "" && document.getElementById("editprojecttype").value.trim() == "" && document.getElementById("editdescription").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Project Name , Start Date , End Date , Budget , Description and Select Client Name and Select Project Type";
+        } else if (document.getElementById("editprojectname").value.trim() == "" && document.getElementById("editclientname").value.trim() == "" && document.getElementById("editstartdate").value.trim() == "" && document.getElementById("editenddate").value.trim() == "" && document.getElementById("editbudget").value.trim() == "" && document.getElementById("editprojecttype").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Project Name , Start Date , End Date , Budget and Select Client Name and Select Project Type";
+        } else if (document.getElementById("editprojectname").value.trim() == "" && document.getElementById("editclientname").value.trim() == "" && document.getElementById("editstartdate").value.trim() == "" && document.getElementById("editenddate").value.trim() == "" && document.getElementById("editbudget").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Project Name , Start Date , End Date , Budget and Select Client Name ";
+        } else if (document.getElementById("editprojectname").value.trim() == "" && document.getElementById("editclientname").value.trim() == "" && document.getElementById("editstartdate").value.trim() == "" && document.getElementById("editenddate").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Project Name , Start Date , End Date and Select Client Name ";
+        } else if (document.getElementById("editprojectname").value.trim() == "" && document.getElementById("editclientname").value.trim() == "" && document.getElementById("editstartdate").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Project Name , Start Date and Select Client Name ";
+        } else if (document.getElementById("editprojectname").value.trim() == "" && document.getElementById("editclientname").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Project Name and Select Client Name ";
+        } else if (document.getElementById("editprojectname").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Project Name ";
+        } else if (document.getElementById("editclientname").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Select Name ";
+        } else if (document.getElementById("editstartdate").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Start Date ";
+        } else if (document.getElementById("editenddate").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter End Date ";
+        } else if (document.getElementById("editbudget").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Budget ";
+        } else if (document.getElementById("editprojecttype").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Select Project type ";
+        } else if (document.getElementById("editdescription").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Description ";
+        } else {
+            const getToken = localStorage.getItem("Token")
+            const token = "Bearer" + " " + getToken
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", token);
+            var formdata = new FormData();
+
+
+            formdata.append("Project_Name", Project_Name);
+            formdata.append("Client", Client_Name);
+            formdata.append("Start_Date", Start_Date);
+            formdata.append("End_Date", End_Date);
+            formdata.append("Budget", Budget);
+            formdata.append("Project_Type", Project_Type);
+            formdata.append("Description", Description);
+            formdata.append("Documents", Documents[0]);
+
+            var requestOptions = {
+                method: 'PUT',
+                headers: myHeaders,
+                body: formdata,
+                redirect: 'follow'
+            };
+
+            fetch(`http://127.0.0.1:3647/api/project/${id}`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (!result.error) {
+                        Swal.fire({
+                            //position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successful',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 3000);
+                    } else {
+                        document.getElementById("error1").innerHTML = result.message
+                    }
+                })
+                .catch(error => console.log('error', error));
+
+
+        }
+    }
+
+    var loadFile = function (event) {
+        var image = document.getElementById('output');
+        image.src = URL.createObjectURL(event.target.files[0]);
+    };
+    
+    function remove() {
+        document.getElementById("editdocument").value = "";
+        document.getElementById("output").src = "";
+        event.preventDefault();
+    };
+    
+</script>
+
+</html>

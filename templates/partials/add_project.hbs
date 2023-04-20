@@ -1,0 +1,100 @@
+<div class="page-header">
+    <div class="row align-items-center">
+
+        <div class="col-auto float-right ml-auto">
+            <a href="#" class="btn add-btn" data-toggle="modal" data-target="#admin_add_project"><i
+                    class="fa fa-plus"></i>
+                Add Project</a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div>
+            <table class="table table-striped custom-table mb-0">
+                <thead>
+                    <tr>
+                        <th>Project Name</th>
+                        <th>Clint Name</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Budget</th>
+                        <th>Project Type</th>
+                        <th>Description</th>
+                        
+
+                        <th class="text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tbd">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{{!-- Add Project pop pop--}}
+<div id="admin_add_project" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Project</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Project Name <span class="text-danger">*</span></label>
+                        <input class="form-control" id="projectname" type="text" >
+                    </div>
+                    <label class="focus-label">Client</label>
+                    <div class="form-group form-focus select-focus">
+                        <select class="select floating" id="clientname">
+                            
+                        </select>
+
+                    </div>
+                    <div class="form-group">
+                        <label>Start Date <span class="text-danger">*</span></label>
+                        <input class="form-control datetimepicker" placeholder="dd-mm-yyyy" id="startdate" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label>End Date <span class="text-danger">*</span></label>
+                        <input class="form-control datetimepicker" placeholder="dd-mm-yyyy" id="enddate" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label>Budget<span class="text-danger">*</span></label>
+                        <input class="form-control" id="budget" type="text" >
+                    </div>
+                    <label class="focus-label">Project Type</label>
+                    <div class="form-group form-focus select-focus">
+                        <select class="select floating" id="projecttype">
+                            <option value="Hourly"> Hourly </option>
+                            <option value="Fixed Price"> Fixed Price </option>
+                            
+                        </select>
+
+                    </div>
+                    <div class="form-group">
+                        <label>Description <span class="text-danger">*</span></label>
+                        <textarea rows="4" id="description" class="form-control summernote" placeholder="Enter your message here"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Documents <span class="text-danger">*</span></label>
+                        <input class="form-control" id="document" type="file" >
+                    </div>
+                    <p id="error" class="text-center text-danger"></p>
+                    <p id="ps" class="text-center text-danger"></p>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" onclick="addproject()">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{{!--/ Add Project pop pop--}}

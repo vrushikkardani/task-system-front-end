@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{>head}}
+
+</head>
+
+<body>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+
+        <!-- Header -->
+        {{>header}}
+        <!-- /Header -->
+
+        <!-- Sidebar -->
+        {{>admin_sidebar}}
+        <!-- /Sidebar -->
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div id="navbar-animmenu">
+                        <ul class="show-dropdown main-navbar">
+                            <div class="hori-selector">
+                                <div class="left"></div>
+                                <div class="right"></div>
+                            </div>
+
+                            <li>
+                                <a href="admin_add_user"><i class="fas fa-tachometer-alt"></i>User</a>
+                            </li>
+                            <li>
+                                <a href="admin_add_project"><i class="far fa-chart-bar"></i>Project</a>
+                            </li>
+                            <li class="active">
+                                <a href="admin_add_client"><i class="far fa-chart-bar"></i>Client</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="content container-fluid">
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="page-title">Settings</h3>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item">Home</li>
+                                <li class="breadcrumb-item active">Settings</li>
+                                <li class="breadcrumb-item active">Client</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                {{>add_client}}
+                {{>admin_edit_client_pop_pop}}
+            </div>
+
+        </div>
+
+
+    </div>
+    <!-- /Page Wrapper -->
+
+    </div>
+    <!-- /Main Wrapper -->
+
+    {{>js}}
+
+</body>
+<script>
+    $(document).ready(function () {
+        $('#liadmin_add_user').addClass('active');
+    });
+    data()
+    function addclient() {
+        event.preventDefault();
+
+        document.getElementById("error").innerHTML = "";
+        var Client_Name = document.getElementById("clientname").value
+        var Email_Id = document.getElementById("email").value
+        var Contact_Number = document.getElementById("contactnumber").value
+        var Address = document.getElementById("address").value
+        var City = document.getElementById("city").value
+
+        var emailvalid = new RegExp("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$");
+        var regPhone = /^\d{10}$/;
+
+        if (document.getElementById("clientname").value.trim() == "" && document.getElementById("email").value.trim() == "" && document.getElementById("contactnumber").value.trim() == "" && document.getElementById("address").value.trim() == "" && document.getElementById("city").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Client Name , Email Id , Contact Number , Address and City Name"
+        } else if (document.getElementById("clientname").value.trim() == "" && document.getElementById("email").value.trim() == "" && document.getElementById("contactnumber").value.trim() == "" && document.getElementById("address").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Client Name , Email Id , Contact Number and Address "
+        } else if (document.getElementById("clientname").value.trim() == "" && document.getElementById("email").value.trim() == "" && document.getElementById("contactnumber").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Client Name , Email Id and Contact Number "
+        } else if (document.getElementById("clientname").value.trim() == "" && document.getElementById("email").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Client Name and Email Id  "
+        } else if (document.getElementById("clientname").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Client Name  "
+        } else if (document.getElementById("email").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Email  "
+        } else if (document.getElementById("contactnumber").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter Contact Number  "
+        } else if (document.getElementById("address").value.trim == "") {
+            document.getElementById("error").innerHTML = "Enter address  "
+        } else if (document.getElementById("city").value.trim() == "") {
+            document.getElementById("error").innerHTML = "Enter city  "
+        } else {
+            if (!emailvalid.test(Email_Id)) {
+                document.getElementById("error").innerHTML = "Enter Valid email address!";
+            } else if (!regPhone.test(Contact_Number)) {
+                document.getElementById("error").innerHTML = "Please enter your contact number properly.";
+            } else {
+                const getToken = localStorage.getItem("Token")
+                const token = "Bearer" + " " + getToken
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", token);
+                myHeaders.append("Content-Type", "application/json");
+
+                var raw = JSON.stringify({
+                    Client_Name: Client_Name,
+                    Email_Id: Email_Id,
+                    Contact_Number: Contact_Number,
+                    Address: Address,
+                    City: City
+                });
+                var requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                };
+                fetch("http://127.0.0.1:3647/api/client/create", requestOptions)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (!result.error) {
+                            Swal.fire({
+                                // position: 'top-end',
+                                icon: 'success',
+                                title: 'Add Sucessful',
+                                showConfirmButton: false,
+                                timer: 3000
+                            })
+                            setTimeout(function () {
+                                window.location.href = "admin_add_client";
+                            }, 3000);
+                        } else {
+                            document.getElementById("error6").innerHTML = result.message
+                        }
+                    })
+                    .catch(error => console.log('error', error));
+            }
+        }
+
+    }
+
+    function data() {
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+
+
+        fetch("http://127.0.0.1:3647/api/client", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                var table = document.getElementById('tbd');
+                table.innerHTML = "";
+
+                for (i = 0; i <= result.data.length; i++) {
+                    var Client_Name = result.data[i].Client_Name
+                    var Email_Id = result.data[i].Email_Id
+                    var Contact_Number = result.data[i].Contact_Number
+                    var Address = result.data[i].Address
+                    var City = result.data[i].City
+                    var id = result.data[i]._id
+                    //var password = result.data[i].password
+                    var template = `
+                    <tr>
+                        <td >${Client_Name}</td>
+                        <td >${Email_Id}</td>
+                        <td >${Contact_Number}</td>
+                        <td >${Address}</td>
+                        <td >${City}</td>
+                        <td class="text-right">
+								<div class="dropdown dropdown-action">
+									<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+										aria-expanded="false"><i class="material-icons">more_vert</i></a>
+									<div class="dropdown-menu dropdown-menu-right">
+										<a onclick="{edit('${Client_Name}','${Email_Id}','${Contact_Number}','${Address}','${City}','${id}')}" class="dropdown-item" href="#" data-toggle="modal" data-target="#admin_edit_client"><i onclick="edit(this)" class="fa fa-pencil m-r-5"></i> Edit</a>
+										<a onclick="{Delete('${id}')}"  class="dropdown-item" href="#" data-toggle="modal"
+											data-target="#delete_department"><i onclick="Delete(this)" class="fa fa-trash-o m-r-5"></i>
+											Delete</a>
+									</div>
+								</div>
+							</td>
+                    </tr>`;
+                    table.innerHTML += template;
+                }
+
+
+
+            })
+            .catch(error => console.log('error', error));
+    }
+
+    function Delete(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                )
+                var requestOptions = {
+                    method: 'DELETE',
+                    redirect: 'follow'
+                };
+
+                fetch(`http://127.0.0.1:3647/api/client/${id}`, requestOptions)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (!result.error) {
+                            data()
+                        } else {
+                            document.getElementById("error").innerHTML = result.message
+                        }
+                    })
+                    .catch(error => console.log('error', error));
+            }
+        })
+    }
+
+    function edit(Client_Name, Email_Id, Contact_Number, Address, City, id) {
+        document.getElementById("editclientname").value = Client_Name;
+        document.getElementById("editclientemail").value = Email_Id;
+        document.getElementById("editclientnumber").value = Contact_Number;
+        document.getElementById("editclientaddress").value = Address;
+        document.getElementById("editclientcity").value = City;
+        document.getElementById("editclientid").value = id;
+    }
+
+
+
+    function updateclient() {
+        event.preventDefault();
+        document.getElementById("error1").innerHTML = "";
+        var Client_Name = document.getElementById("editclientname").value
+        var Email_Id = document.getElementById("editclientemail").value
+        var Contact_Number = document.getElementById("editclientnumber").value
+        var Address = document.getElementById("editclientaddress").value
+        var City = document.getElementById("editclientcity").value
+        var _Id = document.getElementById("editclientid").value
+
+        var emailvalid = new RegExp("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$");
+        var regPhone = /^\d{10}$/;
+
+        if (document.getElementById("editclientname").value.trim() == "" && document.getElementById("editclientemail").value.trim() == "" && document.getElementById("editclientnumber").value.trim() == "" && document.getElementById("editclientaddress").value.trim() == "" && document.getElementById("editclientcity").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Client Name , Email Id , Contact Number , Address and City Name"
+        } else if (document.getElementById("editclientname").value.trim() == "" && document.getElementById("editclientemail").value.trim() == "" && document.getElementById("editclientnumber").value.trim() == "" && document.getElementById("editclientaddress").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Client Name , Email Id , Contact Number and Address "
+        } else if (document.getElementById("editclientname").value.trim() == "" && document.getElementById("editclientemail").value.trim() == "" && document.getElementById("editclientnumber").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Client Name , Email Id and Contact Number "
+        } else if (document.getElementById("editclientname").value.trim() == "" && document.getElementById("editclientemail").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Client Name and Email Id  "
+        } else if (document.getElementById("editclientname").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Client Name  "
+        } else if (document.getElementById("editclientemail").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Email  "
+        } else if (document.getElementById("editclientnumber").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Contact Number  "
+        } else if (document.getElementById("editclientaddress").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter address  "
+        } else if (document.getElementById("editclientcity").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter city  "
+        } else {
+            if (!emailvalid.test(Email_Id)) {
+                document.getElementById("error1").innerHTML = "Enter Valid email address!";
+            } else if (!regPhone.test(Contact_Number)) {
+                document.getElementById("error1").innerHTML = "Please enter your contact number properly.";
+            } else {
+                const getToken = localStorage.getItem("Token")
+                const token = "Bearer" + " " + getToken
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", token);
+                myHeaders.append("Content-Type", "application/json");
+                var raw = JSON.stringify({
+                    Client_Name: Client_Name,
+                    Email_Id: Email_Id,
+                    Contact_Number: Contact_Number,
+                    Address: Address,
+                    City: City
+                });
+
+                var requestOptions = {
+                    method: 'PUT',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                };
+
+                fetch(`http://127.0.0.1:3647/api/client/${_Id}`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (!result.error) {
+                        Swal.fire({
+                            //position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successful',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 3000);
+                    } else {
+                        document.getElementById("error1").innerHTML = result.message
+                    }
+                })
+                .catch(error => console.log('error', error));
+
+            }
+        }
+    }
+
+</script>
+
+</html>

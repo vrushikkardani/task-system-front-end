@@ -1,0 +1,40 @@
+<!-- Add Task Modal -->
+<div id="edit_detail" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Status & Time</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <label class="focus-label">Status</label>
+                    <div class="form-group form-focus select-focus">
+                        <select class="select floating" id="editstatus">
+                            <option value="To Do"> To Do </option>
+                            <option value="On Going"> On Going </option>
+                            <option value="Complete"> Complete </option>
+                        </select>
+
+                    </div>
+                    <div class="form-group">
+                        <label>Start Time <span class="text-danger">*</span></label>
+                        <input class="form-control" id="editstarttime" type="text" >
+                    </div>
+                    <div class="form-group">
+                        <label>End Time <span class="text-danger">*</span></label>
+                        <input class="form-control" id="editendtime" type="text" >
+                    </div>
+                    <input class="form-control" id="id" type="text" hidden>
+                    <p id="error1" class="text-center text-danger"></p>
+                    <p id="ps" class="text-center text-danger"></p>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" onclick="update()">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

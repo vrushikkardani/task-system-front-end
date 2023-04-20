@@ -1,0 +1,66 @@
+<div id="admin_edit_project" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit User Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                   
+                    <div class="form-group">
+                        <label>Project Name <span class="text-danger">*</span></label>
+                        <input class="form-control" id="editprojectname" type="text" >
+                    </div>
+                    <label class="focus-label">Client</label>
+                    <div class="form-group form-focus select-focus">
+                        <select class="select floating" id="editclientname">
+                            
+                        </select>
+
+                    </div>
+                    <div class="form-group">
+                        <label>Start Date <span class="text-danger">*</span></label>
+                        <input class="form-control datetimepicker" placeholder="dd-mm-yyyy" id="editstartdate" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label>End Date <span class="text-danger">*</span></label>
+                        <input class="form-control datetimepicker" placeholder="dd-mm-yyyy" id="editenddate" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label>Budget<span class="text-danger">*</span></label>
+                        <input class="form-control" id="editbudget" type="text" >
+                    </div>
+                    <label class="focus-label">Project Type</label>
+                    <div class="form-group form-focus select-focus">
+                        <select class="select floating" id="editprojecttype">
+                            <option value="Hourly"> Hourly </option>
+                            <option value="Fixed Price"> Fixed Price </option>
+                            
+                        </select>
+
+                    </div>
+                    <div class="form-group">
+                        <label>Description <span class="text-danger">*</span></label>
+                        <textarea rows="4" id="editdescription" class="form-control summernote" placeholder="Enter your message here"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Documents <span class="text-danger">*</span></label>
+                        <input class="form-control" id="editdocument" type="file" >
+                        <p><iframe id="output" style="width:300px; height:250px;" frameborder="0"></iframe></p><button onclick="remove()">Remove</button>
+                    </div>
+                    <p id="error1" class="text-center text-danger"></p>
+                    <div class="form-group">
+                        <input class="form-control" id="editprojecttid" type="text" hidden>
+                    </div>
+                    <p id="ps" class="text-center text-danger"></p>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" onclick="updateproject()">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

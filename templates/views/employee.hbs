@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{>head}}
+
+    <style>
+        #c1 {
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+
+        <!-- Header -->
+        {{>header}}
+        <!-- /Header -->
+
+        <!-- Sidebar -->
+        {{>employee_sidebar}}
+        <!-- /Sidebar -->
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+            <div class="content container-fluid">
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="page-title">Work</h3>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item">Home</li>
+                                <li class="breadcrumb-item active">Work</li>
+                            </ul>
+                        </div>
+
+                        {{!-- <div class="col-auto float-right ml-auto">
+                            <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_task"><i
+                                    class="fa fa-plus"></i> Add Task</a>
+                        </div> --}}
+                    </div>
+                </div>
+
+                {{>employee_filter}}
+                {{>employee_work_details}}
+                {{>employee_edit_detail_pop_pop}}
+                {{>employee_view_task_in_pop_pop}}
+            </div>
+
+        </div>
+
+
+    </div>
+    <!-- /Page Wrapper -->
+
+    </div>
+    <!-- /Main Wrapper -->
+
+    {{>js}}
+
+</body>
+<script>
+    $(document).ready(function () {
+        $('#liemployee').addClass('active');
+    });
+    $('#editstarttime').datetimepicker({
+        format: 'hh:mm:ss a'
+    });
+    $('#editendtime').datetimepicker({
+        format: 'hh:mm:ss a'
+    });
+
+    date()
+    projectname()
+    function date() {
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch("http://127.0.0.1:3647/api/task", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                var Data = document.getElementById('data');
+                Data.innerHTML = "";
+                const email = localStorage.getItem("Email");
+                console.log(email)
+                for (i = 0; i < result.data.length; i++) {
+                    var Employee_Email_id = result.data[i].Allocate_Employe_Email_Id
+
+                    var Project_Name = result.data[i].Project
+                    var Task = result.data[i].Task
+                    var Description = result.data[i].Description
+                    var Start_Time = result.data[i].Start_Time
+                    var End_Time = result.data[i].End_Time
+                    var Status = result.data[i].Status
+                    var Date = result.data[i].Date
+                    var id = result.data[i]._id
+                    if (Employee_Email_id == email) {
+                        var template = `
+                    <div class="col-lg-4 col-sm-6 col-md-4 col-xl-3" >
+		            <div class="card" >
+			        <div class="card-body" >
+				    <div class="dropdown dropdown-action profile-action">
+					<span class="task-priority badge ${Status == 'To Do' ? 'bg-inverse-warning' : (Status == 'On Going' ? 'bg-inverse-danger' : (Status == 'Complete' ? 'bg-inverse-success' : ''))}">${Status}</span>
+					<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i
+							class="material-icons">more_vert</i></a>
+					<div class="dropdown-menu dropdown-menu-right">
+						<a onclick="{edit('${Project_Name}','${Task}','${Description}','${Start_Time}','${End_Time}','${Employee_Email_id}','${Status}','${id}','${Date}')}" class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_detail"><i
+								class="fa fa-pencil m-r-5"></i> Edit</a>
+						
+
+					</div>
+				        </div>
+				    <h4 class="project-title"><a onclick="{view('${Project_Name}','${Task}','${Description}','${Employee_Email_id}','${id}')}" href="#" data-toggle="modal" data-target="#view_task">${Project_Name}</a></h4>
+				    <p id="c1" class="text-muted">${Task}
+				    </p>
+				    <br>
+				    <div class="pro-deadline m-b-15">
+                    <div class="sub-title">
+						Description :
+					</div>
+				    <div id="c1" class="text-muted">
+                        ${Description}
+				    </div>
+                    
+                </div>
+				    <div class="pro-deadline m-b-15">
+					<div class="sub-title">
+						Start Time:
+					</div>
+					<div class="text-muted">
+						${Start_Time}
+					</div>
+				    </div>
+				    <div class="pro-deadline m-b-15">
+					<div class="sub-title">
+						End Time:
+					</div>
+					<div class="text-muted">
+						${End_Time}
+					</div>
+				    </div>
+				    <div class="pro-deadline m-b-15">
+					<div class="sub-title">
+						Date:
+					</div>
+					<div class="text-muted">
+						${Date}
+					</div>
+				    </div>
+				    </div>
+				    </div>
+				    </div>
+                     `
+
+                        Data.innerHTML += template
+                    } else if (Employee_Email_id == "") {
+                        Data.innerHTML = "No Task...."
+                    }
+                }
+            })
+            .catch(error => console.log('error', error));
+    }
+
+
+
+
+    function edit(Project_Name, Task, Description, Start_Time, End_Time, Employee_Email_id, Status, id, Date) {
+        document.getElementById("editstarttime").value = Start_Time
+        document.getElementById("editendtime").value = End_Time
+        document.getElementById("id").value = id
+        //document.getElementById("employeeemailid").value
+
+        console.log(id)
+
+        var select3 = document.getElementById("editstatus")
+        select3.value = Status;
+        triggerChange(select3)
+    }
+    function triggerChange(element) {
+        let changeEvent = new Event("change");
+        element.dispatchEvent(changeEvent);
+    }
+
+    function update() {
+        event.preventDefault();
+        document.getElementById("error1").innerHTML = "";
+
+        var Start_Time = document.getElementById("editstarttime").value
+        var End_Time = document.getElementById("editendtime").value
+        var Status = document.getElementById("editstatus").value
+        var _ID = document.getElementById("id").value
+
+        if (document.getElementById("editstarttime").value.trim() == "" && document.getElementById("editendtime").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Start Time and End Time"
+        } else if (document.getElementById("editstarttime").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter Start Time "
+        } else if (document.getElementById("editendtime").value.trim() == "") {
+            document.getElementById("error1").innerHTML = "Enter End Time "
+        }
+        else {
+
+            const getToken = localStorage.getItem("Token")
+            const token = "Bearer" + " " + getToken
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", token);
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify({
+                "Start_Time": Start_Time,
+                "End_Time": End_Time,
+                "Status": Status
+            });
+
+            var requestOptions = {
+                method: 'PUT',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            fetch(`http://127.0.0.1:3647/api/task/${_ID}`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (!result.error) {
+                        Swal.fire({
+                            //position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successful',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 3000);
+                    } else {
+                        document.getElementById("error1").innerHTML = result.message
+                    }
+                })
+
+                .catch(error => console.log('error', error));
+
+        }
+    }
+
+
+    function view(Project_Name, Task, Description, Employee_Email_id) {
+
+        document.getElementById("viewprojectname").innerHTML = Project_Name
+        document.getElementById("viewtask").innerHTML = Task
+        document.getElementById("viewdescription").innerHTML = Description
+    }
+
+
+    function search() {
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch("http://127.0.0.1:3647/api/task", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                var Data = document.getElementById('data');
+                Data.innerHTML = "";
+                const email = localStorage.getItem("Email");
+                //console.log(email)
+                for (i = 0; i < result.data.length; i++) {
+                    var Employee_Email_id = result.data[i].Allocate_Employe_Email_Id
+                    var searchstatus = document.getElementById("searchstatus").value
+                    var searchprojectname = document.getElementById("projectsearch").value
+                    var Project_Name = result.data[i].Project
+                    var Task = result.data[i].Task
+                    var Description = result.data[i].Description
+                    var Start_Time = result.data[i].Start_Time
+                    var End_Time = result.data[i].End_Time
+                    var Status = result.data[i].Status
+                    var Date = result.data[i].Date
+                    var id = result.data[i]._id
+                    if (Employee_Email_id == email && searchstatus == Status && Project_Name == searchprojectname) {
+                        var template = `
+                        <div class="col-lg-4 col-sm-6 col-md-4 col-xl-3" >
+		                <div class="card" >
+			            <div class="card-body" >
+				        <div class="dropdown dropdown-action profile-action">
+					    <span class="task-priority badge ${Status == 'To Do' ? 'bg-inverse-warning' : (Status == 'On Going' ? 'bg-inverse-danger' : (Status == 'Complete' ? 'bg-inverse-success' : ''))}">${Status}</span>
+					    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i
+							class="material-icons">more_vert</i></a>
+					    <div class="dropdown-menu dropdown-menu-right">
+						<a onclick="{edit('${Project_Name}','${Task}','${Description}','${Start_Time}','${End_Time}','${Employee_Email_id}','${Status}','${id}','${Date}')}" class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_detail"><i
+								class="fa fa-pencil m-r-5"></i> Edit</a>
+						
+
+					    </div>
+				        </div>
+				        <h4 class="project-title"><a onclick="{view('${Project_Name}','${Task}','${Description}','${Employee_Email_id}','${id}')}" href="#" data-toggle="modal" data-target="#view_task">${Project_Name}</a></h4>
+				        <p id="c1" class="text-muted">${Task}
+				        </p>
+				        <br>
+				        <div class="pro-deadline m-b-15">
+                        <div class="sub-title">
+						Description :
+					    </div>
+				        <div id="c1" class="text-muted">
+                        ${Description}
+				        </div>
+                    
+                        </div>
+				        <div class="pro-deadline m-b-15">
+					    <div class="sub-title">
+						Start Time:
+					    </div>
+					    <div class="text-muted">
+						${Start_Time}
+					    </div>
+				        </div>
+				        <div class="pro-deadline m-b-15">
+					    <div class="sub-title">
+						End Time:
+					    </div>
+					    <div class="text-muted">
+						${End_Time}
+					    </div>
+				        </div>
+				        <div class="pro-deadline m-b-15">
+					    <div class="sub-title">
+						Date:
+					    </div>
+					    <div class="text-muted">
+						${Date}
+					        </div>
+				        </div>
+				        </div>
+				        </div>
+				        </div>
+                         `
+
+                        Data.innerHTML += template
+                    }
+
+                }
+
+                if(Data.innerHTML == ""){
+
+                    Data.innerHTML = `
+                    <div class="col-lg-4 col-sm-6 col-md-4 col-xl-3" >
+                    <h5 class="text-danger">No Record Found...</h5>
+                    </div>`;
+                }
+
+            })
+            .catch(error => console.log('error', error));
+    }
+    function projectname() {
+
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch("http://127.0.0.1:3647/api/task", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                var ary = []
+                const email = localStorage.getItem("Email");
+                for (i = 0; i < result.data.length; i++) {
+                    var Project_Name = result.data[i].Project
+                    //console.log(Project_Name)
+                    var Employee_Email_id = result.data[i].Allocate_Employe_Email_Id
+                    if (email == Employee_Email_id) {
+                        ary.push(Project_Name)
+                    }
+                }
+                let uniqueChars = [...new Set(ary)];
+                var select = document.getElementById("projectsearch")
+                select.innerHTML = "";
+                for (i = 0; i < uniqueChars.length; i++) {
+                    var Project_Name = uniqueChars[i]
+                    var template = `
+                            <option value="${Project_Name}">${Project_Name}</option>
+                                `
+                    select.innerHTML += template;
+                }
+
+            })
+            .catch(error => console.log('error', error));
+    }
+
+
+
+
+</script>
+
+</html>
